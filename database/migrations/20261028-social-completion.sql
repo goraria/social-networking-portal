@@ -1,0 +1,16 @@
+ALTER TABLE post ADD COLUMN IF NOT EXISTS client_request_id uuid;
+ALTER TABLE post ADD COLUMN IF NOT EXISTS version integer NOT NULL DEFAULT 1;
+ALTER TABLE post ADD COLUMN IF NOT EXISTS request_fingerprint text;
+ALTER TABLE post ADD COLUMN IF NOT EXISTS review_requested boolean NOT NULL DEFAULT false;
+ALTER TABLE page ADD COLUMN IF NOT EXISTS name varchar(255) NOT NULL DEFAULT '';
+ALTER TABLE post ADD COLUMN IF NOT EXISTS group_id uuid REFERENCES "group"(id) ON DELETE CASCADE;
+ALTER TABLE post ADD COLUMN IF NOT EXISTS community_id uuid REFERENCES community(id) ON DELETE CASCADE;
+CREATE UNIQUE INDEX IF NOT EXISTS social_post_request_key ON post(author_id,client_request_id) WHERE client_request_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS social_post_feed_idx ON post(published_at DESC,id DESC) WHERE deleted_at IS NULL;
+ALTER TABLE post_media ADD COLUMN IF NOT EXISTS media_asset_id uuid;
+CREATE UNIQUE INDEX IF NOT EXISTS social_post_asset_key ON post_media(media_asset_id) WHERE media_asset_id IS NOT NULL;
+ALTER TABLE story ADD COLUMN IF NOT EXISTS media_asset_id uuid;
+ALTER TABLE outbox_event ADD COLUMN IF NOT EXISTS lease_token uuid;
+ALTER TABLE outbox_event ADD COLUMN IF NOT EXISTS lease_until timestamp;
+ALTER TABLE outbox_event ADD COLUMN IF NOT EXISTS last_error text;
+CREATE TABLE IF NOT EXISTS social_hidden_post(user_id uuid NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,post_id uuid NOT NULL REFERENCES post(id) ON DELETE CASCADE,PRIMARY KEY(user_id,post_id));

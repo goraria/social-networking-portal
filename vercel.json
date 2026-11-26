@@ -1,0 +1,18 @@
+{
+  "functions": {
+    "app/(api)/background/delivery/route.ts": {
+      "experimentalTriggers": [
+        {
+          "type": "queue/v2beta",
+          "topic": "social-outbox"
+        }
+      ]
+    }
+  },
+  "crons": [
+    {
+      "path": "/background/recover",
+      "schedule": "* * * * *"
+    }
+  ]
+}

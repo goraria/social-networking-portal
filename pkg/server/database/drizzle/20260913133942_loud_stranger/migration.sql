@@ -1,0 +1,1 @@
+ALTER TYPE "post_channel" RENAME TO "post_channel_type";
